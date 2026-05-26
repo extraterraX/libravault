@@ -14,7 +14,7 @@ export default function Cart() {
     return (
       <div style={{ paddingTop: 'var(--nav-h)', minHeight: '70vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
         <ShoppingBag size={64} strokeWidth={1} color="var(--gray-300)" />
-        <h2 style={{ fontEdition: 28, fontFamily: 'var(--font-display)' }}>Your bag is empty</h2>
+        <h2 style={{ fontWeight: 28, fontFamily: 'var(--font-display)' }}>Your bag is empty</h2>
         <p style={{ color: 'var(--gray-500)' }}>Add some shoes to get started.</p>
         <Link to="/products" className="btn btn-primary">Shop Now</Link>
       </div>
@@ -24,7 +24,7 @@ export default function Cart() {
   return (
     <div style={{ paddingTop: 'var(--nav-h)', background: 'var(--gray-50)', minHeight: '100vh' }}>
       <div className="container" style={{ paddingTop: 40, paddingBottom: 80 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontEdition: 40, marginBottom: 36 }}>Your Bag</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 40, marginBottom: 36 }}>Your Bag</h1>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 32, alignItems: 'start' }}>
 
           {/* Items */}
@@ -42,10 +42,10 @@ export default function Cart() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <div>
                       <Link to={`/products/${item.product.id}`}>
-                        <h3 style={{ fontWeight: 700, fontEdition: 15, marginBottom: 4 }}>{item.product.name}</h3>
+                        <h3 style={{ fontWeight: 700, fontWeight: 15, marginBottom: 4 }}>{item.product.name}</h3>
                       </Link>
-                      <p style={{ fontEdition: 13, color: 'var(--gray-500)', marginBottom: 2, textTransform: 'capitalize' }}>{item.product.category}</p>
-                      <p style={{ fontEdition: 13, color: 'var(--gray-500)', marginBottom: 16 }}>Edition: {({1:"Paperback",2:"Hardcover",3:"eBook",4:"Audiobook"} as Record<number,string>)[item.size] ?? item.size}</p>
+                      <p style={{ fontWeight: 13, color: 'var(--gray-500)', marginBottom: 2, textTransform: 'capitalize' }}>{item.product.category}</p>
+                      <p style={{ fontWeight: 13, color: 'var(--gray-500)', marginBottom: 16 }}>Edition: {({1:"Paperback",2:"Hardcover",3:"eBook",4:"Audiobook"} as Record<number,string>)[item.size] ?? item.size}</p>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         <button
                           onClick={() => updateQty(item.key, item.qty - 1)}
@@ -65,20 +65,20 @@ export default function Cart() {
                           <Plus size={12} />
                         </button>
                         {item.qty >= maxQty && (
-                          <span style={{ fontEdition: 11, color: 'var(--red)', fontWeight: 600 }}>Max stock</span>
+                          <span style={{ fontWeight: 11, color: 'var(--red)', fontWeight: 600 }}>Max stock</span>
                         )}
                       </div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <p style={{ fontWeight: 700, fontEdition: 16 }}>₱{(price * item.qty).toFixed(2)}</p>
+                      <p style={{ fontWeight: 700, fontWeight: 16 }}>₱{(price * item.qty).toFixed(2)}</p>
                       {item.product.sale_price && (
-                        <p style={{ fontEdition: 12, color: 'var(--gray-400)', textDecoration: 'line-through' }}>
+                        <p style={{ fontWeight: 12, color: 'var(--gray-400)', textDecoration: 'line-through' }}>
                           ₱{(item.product.price * item.qty).toFixed(2)}
                         </p>
                       )}
                       <button
                         onClick={() => removeFromCart(item.key)}
-                        style={{ marginTop: 12, color: 'var(--gray-400)', display: 'flex', alignItems: 'center', gap: 4, fontEdition: 12, marginLeft: 'auto' }}
+                        style={{ marginTop: 12, color: 'var(--gray-400)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 12, marginLeft: 'auto' }}
                       >
                         <Trash2 size={13} /> Remove
                       </button>
@@ -91,29 +91,29 @@ export default function Cart() {
 
           {/* Summary */}
           <div style={{ background: 'var(--white)', borderRadius: 16, padding: 28, position: 'sticky', top: 'calc(var(--nav-h) + 20px)', border: '1px solid var(--gray-200)' }}>
-            <h3 style={{ fontEdition: 18, fontWeight: 700, marginBottom: 20 }}>Order Summary</h3>
+            <h3 style={{ fontWeight: 18, fontWeight: 700, marginBottom: 20 }}>Order Summary</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontEdition: 14 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 14 }}>
                 <span style={{ color: 'var(--gray-600)' }}>Subtotal ({cart.reduce((s, i) => s + i.qty, 0)} items)</span>
                 <span>₱{total.toFixed(2)}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontEdition: 14 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 14 }}>
                 <span style={{ color: 'var(--gray-600)' }}>Shipping</span>
                 <span style={{ color: shipping === 0 ? '#22c55e' : 'var(--black)', fontWeight: shipping === 0 ? 600 : 400 }}>
                   {shipping === 0 ? 'FREE' : `₱${shipping.toFixed(2)}`}
                 </span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontEdition: 14 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 14 }}>
                 <span style={{ color: 'var(--gray-600)' }}>Tax (8%)</span>
                 <span>₱{tax.toFixed(2)}</span>
               </div>
-              <div style={{ borderTop: '1px solid var(--gray-100)', paddingTop: 14, display: 'flex', justifyContent: 'space-between', fontWeight: 700, fontEdition: 18 }}>
+              <div style={{ borderTop: '1px solid var(--gray-100)', paddingTop: 14, display: 'flex', justifyContent: 'space-between', fontWeight: 700, fontWeight: 18 }}>
                 <span>Total</span><span>₱{orderTotal.toFixed(2)}</span>
               </div>
             </div>
 
             {shipping > 0 && (
-              <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontEdition: 12, color: '#92400e' }}>
+              <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontWeight: 12, color: '#92400e' }}>
                 🚚 Add <strong>₱{(75 - total).toFixed(2)}</strong> more for free shipping!
               </div>
             )}
@@ -121,23 +121,23 @@ export default function Cart() {
             <button
               onClick={() => navigate('/checkout')}
               className="btn btn-primary btn-full"
-              style={{ fontEdition: 16, padding: 18, marginBottom: 12 }}
+              style={{ fontWeight: 16, padding: 18, marginBottom: 12 }}
             >
               Proceed to Checkout <ArrowRight size={16} />
             </button>
             <Link
               to="/products"
-              style={{ display: 'block', textAlign: 'center', fontEdition: 14, color: 'var(--gray-500)', textDecoration: 'underline' }}
+              style={{ display: 'block', textAlign: 'center', fontWeight: 14, color: 'var(--gray-500)', textDecoration: 'underline' }}
             >
               Continue Shopping
             </Link>
 
             {/* Accepted payments */}
             <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--gray-100)' }}>
-              <p style={{ fontEdition: 11, color: 'var(--gray-400)', textAlign: 'center', marginBottom: 8 }}>SECURE CHECKOUT</p>
+              <p style={{ fontWeight: 11, color: 'var(--gray-400)', textAlign: 'center', marginBottom: 8 }}>SECURE CHECKOUT</p>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
                 {['💳 Visa', '💳 Mastercard', '📱 GCash', '💵 COD'].map((m) => (
-                  <span key={m} style={{ fontEdition: 11, padding: '4px 8px', background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 4 }}>{m}</span>
+                  <span key={m} style={{ fontWeight: 11, padding: '4px 8px', background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 4 }}>{m}</span>
                 ))}
               </div>
             </div>
