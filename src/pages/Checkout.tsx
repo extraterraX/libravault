@@ -42,8 +42,8 @@ function AddressForm({ onSave, onCancel }: { onSave: () => void; onCancel: () =>
 
   return (
     <form onSubmit={handleSubmit} style={{ background: 'var(--gray-50)', borderRadius: 14, padding: 24, marginBottom: 20 }}>
-      <h3 style={{ fontWeight: 700, fontWeight: 16, marginBottom: 6 }}>New Delivery Address</h3>
-      <p style={{ fontWeight: 13, color: 'var(--gray-500)', marginBottom: 20 }}>This will be saved for next time, so you don't have to enter it again.</p>
+      <h3 style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>New Delivery Address</h3>
+      <p style={{ fontSize: 13, color: 'var(--gray-500)', marginBottom: 20 }}>This will be saved for next time, so you don't have to enter it again.</p>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
         <div className="form-group">
           <label className="form-label">Label</label>
@@ -69,7 +69,7 @@ function AddressForm({ onSave, onCancel }: { onSave: () => void; onCancel: () =>
           </div>
         ))}
         <div style={{ gridColumn: '1/-1' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontWeight: 14 }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 14 }}>
             <input type="checkbox" checked={form.isDefault} onChange={setField('isDefault')} style={{ width: 16, height: 16 }} />
             Set as default address (auto-select for future orders)
           </label>
@@ -159,12 +159,12 @@ export default function Checkout() {
             <div key={s} style={{ display: 'flex', alignItems: 'center', flex: i < STEPS.length - 1 ? 1 : 0 }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, cursor: STEPS.indexOf(s) < STEPS.indexOf(step) ? 'pointer' : 'default' }}
                 onClick={() => STEPS.indexOf(s) < STEPS.indexOf(step) && setStep(s)}>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontWeight: 13,
+                <div style={{ width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13,
                   background: s === step ? 'var(--black)' : STEPS.indexOf(s) < STEPS.indexOf(step) ? '#22c55e' : 'var(--gray-200)',
                   color: s === step || STEPS.indexOf(s) < STEPS.indexOf(step) ? 'var(--white)' : 'var(--gray-500)' }}>
                   {STEPS.indexOf(s) < STEPS.indexOf(step) ? <Check size={15} strokeWidth={3} /> : i + 1}
                 </div>
-                <span style={{ fontWeight: 11, fontWeight: 600, color: s === step ? 'var(--black)' : 'var(--gray-400)', whiteSpace: 'nowrap' }}>{stepLabels[s]}</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: s === step ? 'var(--black)' : 'var(--gray-400)', whiteSpace: 'nowrap' }}>{stepLabels[s]}</span>
               </div>
               {i < STEPS.length - 1 && <div style={{ flex: 1, height: 2, background: STEPS.indexOf(s) < STEPS.indexOf(step) ? '#22c55e' : 'var(--gray-200)', margin: '0 8px', marginBottom: 20 }} />}
             </div>
@@ -176,9 +176,9 @@ export default function Checkout() {
             {/* STEP 1 — Delivery */}
             {step === 'address' && (
               <div>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 28, marginBottom: 8 }}>Delivery Address</h2>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, marginBottom: 8 }}>Delivery Address</h2>
                 {selectedAddress && !showForm && (
-                  <p style={{ fontWeight: 13, color: '#16a34a', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <p style={{ fontSize: 13, color: '#16a34a', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
                     <Check size={14} /> We've pre-selected your default address
                   </p>
                 )}
@@ -198,10 +198,10 @@ export default function Checkout() {
                       </div>
                       <div>
                         <div style={{ display: 'flex', gap: 8, marginBottom: 4, alignItems: 'center' }}>
-                          <strong style={{ fontWeight: 14 }}>{addr.label}</strong>
-                          {addr.isDefault && <span style={{ fontWeight: 10, background: 'var(--black)', color: 'var(--white)', padding: '2px 7px', borderRadius: 50, fontWeight: 700 }}>DEFAULT</span>}
+                          <strong style={{ fontSize: 14 }}>{addr.label}</strong>
+                          {addr.isDefault && <span style={{ fontSize: 10, background: 'var(--black)', color: 'var(--white)', padding: '2px 7px', borderRadius: 50, fontWeight: 700 }}>DEFAULT</span>}
                         </div>
-                        <p style={{ fontWeight: 14, color: 'var(--gray-700)', lineHeight: 1.5 }}>
+                        <p style={{ fontSize: 14, color: 'var(--gray-700)', lineHeight: 1.5 }}>
                           {addr.fullName}<br />
                           {addr.line1}{addr.line2 ? `, ${addr.line2}` : ''}<br />
                           {addr.city}, {addr.province} {addr.zip}<br />
@@ -212,7 +212,7 @@ export default function Checkout() {
                     <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                       {!addr.isDefault && (
                         <button onClick={async (e) => { e.stopPropagation(); await setDefaultAddress(user.id, addr.id); refetchAddr() }}
-                          style={{ fontWeight: 11, color: 'var(--gray-500)', border: '1px solid var(--gray-200)', borderRadius: 6, padding: '4px 8px' }}>
+                          style={{ fontSize: 11, color: 'var(--gray-500)', border: '1px solid var(--gray-200)', borderRadius: 6, padding: '4px 8px' }}>
                           Set default
                         </button>
                       )}
@@ -238,19 +238,19 @@ export default function Checkout() {
             {/* STEP 2 — Payment */}
             {step === 'payment' && (
               <div>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 28, marginBottom: 8 }}>Payment Method</h2>
-                <p style={{ fontWeight: 14, color: 'var(--gray-500)', marginBottom: 24 }}>Choose how you'd like to pay for your order.</p>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, marginBottom: 8 }}>Payment Method</h2>
+                <p style={{ fontSize: 14, color: 'var(--gray-500)', marginBottom: 24 }}>Choose how you'd like to pay for your order.</p>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 14, padding: 20, background: 'var(--white)', borderRadius: 12, border: '2px solid var(--black)', cursor: 'pointer', marginBottom: 16 }}>
                   <input type="radio" name="pay" checked readOnly style={{ width: 18, height: 18 }} />
-                  <span style={{ fontWeight: 24 }}>💵</span>
+                  <span style={{ fontSize: 24 }}>💵</span>
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontWeight: 700, fontWeight: 15 }}>Cash on Delivery</p>
-                    <p style={{ fontWeight: 12, color: 'var(--gray-500)', marginTop: 2 }}>Pay in cash when your order arrives</p>
+                    <p style={{ fontWeight: 700, fontSize: 15 }}>Cash on Delivery</p>
+                    <p style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 2 }}>Pay in cash when your order arrives</p>
                   </div>
                 </label>
-                <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 12, padding: '14px 18px', fontWeight: 14, color: '#15803d', marginBottom: 24, lineHeight: 1.5 }}>
+                <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 12, padding: '14px 18px', fontSize: 14, color: '#15803d', marginBottom: 24, lineHeight: 1.5 }}>
                   💵 <strong>Pay in cash when your order is delivered.</strong><br/>
-                  <span style={{ fontWeight: 13, color: '#166534' }}>No extra charges. Please prepare the exact amount or small bills.</span>
+                  <span style={{ fontSize: 13, color: '#166534' }}>No extra charges. Please prepare the exact amount or small bills.</span>
                 </div>
                 <div style={{ display: 'flex', gap: 12 }}>
                   <button onClick={() => setStep('address')} className="btn btn-secondary">← Back</button>
@@ -264,18 +264,18 @@ export default function Checkout() {
             {/* STEP 3 — Review */}
             {step === 'confirm' && (
               <div>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 28, marginBottom: 20 }}>Review Your Order</h2>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, marginBottom: 20 }}>Review Your Order</h2>
                 <div style={{ background: 'var(--white)', borderRadius: 14, border: '1px solid var(--gray-200)', overflow: 'hidden', marginBottom: 16 }}>
                   <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--gray-100)', display: 'flex', justifyContent: 'space-between' }}>
                     <strong>Items ({cart.length})</strong>
-                    <button onClick={() => navigate('/cart')} style={{ fontWeight: 13, color: 'var(--gray-500)', textDecoration: 'underline' }}>Edit bag</button>
+                    <button onClick={() => navigate('/cart')} style={{ fontSize: 13, color: 'var(--gray-500)', textDecoration: 'underline' }}>Edit bag</button>
                   </div>
                   {cart.map((item) => (
                     <div key={item.key} style={{ display: 'flex', gap: 14, padding: '14px 20px', borderBottom: '1px solid var(--gray-100)', alignItems: 'center' }}>
                       <img src={item.product.image} alt="" style={{ width: 52, height: 52, borderRadius: 8, objectFit: 'cover', background: 'var(--gray-100)', flexShrink: 0 }} />
                       <div style={{ flex: 1 }}>
-                        <p style={{ fontWeight: 700, fontWeight: 14 }}>{item.product.name}</p>
-                        <p style={{ fontWeight: 12, color: 'var(--gray-500)' }}>{({1:"Paperback",2:"Hardcover",3:"eBook",4:"Audiobook"} as Record<number,string>)[item.size] ?? item.size} · Qty {item.qty}</p>
+                        <p style={{ fontWeight: 700, fontSize: 14 }}>{item.product.name}</p>
+                        <p style={{ fontSize: 12, color: 'var(--gray-500)' }}>{({1:"Paperback",2:"Hardcover",3:"eBook",4:"Audiobook"} as Record<number,string>)[item.size] ?? item.size} · Qty {item.qty}</p>
                       </div>
                       <strong>₱{((item.product.sale_price ?? item.product.price) * item.qty).toFixed(2)}</strong>
                     </div>
@@ -285,10 +285,10 @@ export default function Checkout() {
                 {selectedAddress && (
                   <div style={{ background: 'var(--white)', borderRadius: 14, border: '1px solid var(--gray-200)', padding: '16px 20px', marginBottom: 16 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                      <strong style={{ fontWeight: 14 }}>Deliver to</strong>
-                      <button onClick={() => setStep('address')} style={{ fontWeight: 13, color: 'var(--gray-500)', textDecoration: 'underline' }}>Change</button>
+                      <strong style={{ fontSize: 14 }}>Deliver to</strong>
+                      <button onClick={() => setStep('address')} style={{ fontSize: 13, color: 'var(--gray-500)', textDecoration: 'underline' }}>Change</button>
                     </div>
-                    <p style={{ fontWeight: 14, color: 'var(--gray-600)', lineHeight: 1.6 }}>
+                    <p style={{ fontSize: 14, color: 'var(--gray-600)', lineHeight: 1.6 }}>
                       {selectedAddress.fullName} · {selectedAddress.phone}<br />
                       {selectedAddress.line1}, {selectedAddress.city}, {selectedAddress.province} {selectedAddress.zip}
                     </p>
@@ -307,23 +307,23 @@ export default function Checkout() {
 
           {/* Sidebar */}
           <div style={{ background: 'var(--white)', borderRadius: 16, padding: 24, border: '1px solid var(--gray-200)', position: 'sticky', top: 'calc(var(--nav-h) + 20px)' }}>
-            <h3 style={{ fontWeight: 700, fontWeight: 16, marginBottom: 18 }}>Order Summary</h3>
+            <h3 style={{ fontWeight: 700, fontSize: 16, marginBottom: 18 }}>Order Summary</h3>
             {cart.slice(0, 3).map((item) => (
               <div key={item.key} style={{ display: 'flex', gap: 10, marginBottom: 12, alignItems: 'center' }}>
                 <img src={item.product.image} alt="" style={{ width: 44, height: 44, borderRadius: 6, objectFit: 'cover', background: 'var(--gray-100)', flexShrink: 0 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontWeight: 13, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.product.name}</p>
-                  <p style={{ fontWeight: 11, color: 'var(--gray-500)' }}>×{item.qty} · {({1:"Paperback",2:"Hardcover",3:"eBook",4:"Audiobook"} as Record<number,string>)[item.size] ?? item.size}</p>
+                  <p style={{ fontSize: 13, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.product.name}</p>
+                  <p style={{ fontSize: 11, color: 'var(--gray-500)' }}>×{item.qty} · {({1:"Paperback",2:"Hardcover",3:"eBook",4:"Audiobook"} as Record<number,string>)[item.size] ?? item.size}</p>
                 </div>
-                <span style={{ fontWeight: 13, fontWeight: 700 }}>₱{((item.product.sale_price ?? item.product.price) * item.qty).toFixed(2)}</span>
+                <span style={{ fontSize: 13, fontWeight: 700 }}>₱{((item.product.sale_price ?? item.product.price) * item.qty).toFixed(2)}</span>
               </div>
             ))}
-            {cart.length > 3 && <p style={{ fontWeight: 12, color: 'var(--gray-400)', marginBottom: 12 }}>+ {cart.length - 3} more</p>}
+            {cart.length > 3 && <p style={{ fontSize: 12, color: 'var(--gray-400)', marginBottom: 12 }}>+ {cart.length - 3} more</p>}
             <div style={{ borderTop: '1px solid var(--gray-100)', paddingTop: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 14 }}><span>Subtotal</span><span>₱{total.toFixed(2)}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 14 }}><span>Shipping</span><span style={{ color: shipping === 0 ? '#22c55e' : undefined }}>{shipping === 0 ? 'Free' : `₱${shipping.toFixed(2)}`}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 14 }}><span>Tax (8%)</span><span>₱{tax.toFixed(2)}</span></div>
-              <div style={{ borderTop: '1px solid var(--gray-100)', paddingTop: 12, display: 'flex', justifyContent: 'space-between', fontWeight: 700, fontWeight: 18 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}><span>Subtotal</span><span>₱{total.toFixed(2)}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}><span>Shipping</span><span style={{ color: shipping === 0 ? '#22c55e' : undefined }}>{shipping === 0 ? 'Free' : `₱${shipping.toFixed(2)}`}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}><span>Tax (8%)</span><span>₱{tax.toFixed(2)}</span></div>
+              <div style={{ borderTop: '1px solid var(--gray-100)', paddingTop: 12, display: 'flex', justifyContent: 'space-between', fontWeight: 700, fontSize: 18 }}>
                 <span>Total</span><span>₱{orderTotal.toFixed(2)}</span>
               </div>
             </div>
