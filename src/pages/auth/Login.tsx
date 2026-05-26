@@ -47,9 +47,20 @@ export default function Login() {
     <div className="auth-page">
       <div className="auth-card">
         <Link to="/" className="auth-logo">
-          <svg viewBox="0 0 60 24" fill="none" style={{ width: 56, height: 22 }}>
-            <path d="M6 18L42.5 4C44.5 3.2 46 3.5 46 5.5C46 7.5 43 10.5 40 12L6 18Z" fill="currentColor" />
-          </svg>
+              <svg viewBox="0 0 64 64" fill="none" style={{ width: 56, height: 56 }}>
+      <rect x="10" y="10" width="44" height="44" rx="12" fill="currentColor" opacity="0.1"/>
+
+      <path
+        d="M20 18h14c4 0 8 2 8 6v22c0-4-4-6-8-6H20V18z"
+        fill="currentColor"
+      />
+
+      <path
+        d="M24 22h10v18H24c-2 0-4 1-4 2V24c0-1 2-2 4-2z"
+        fill="white"
+        opacity="0.5"
+      />
+    </svg>
         </Link>
         <h1 className="auth-title">Welcome back</h1>
         <p className="auth-sub">Sign in to your LibraVault account</p>
@@ -92,7 +103,7 @@ export default function Login() {
 
       <div className="auth-visual">
         <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&q=80" alt="Books" />
-        <div className="auth-visual-overlay"><h2>JUST DO IT.</h2></div>
+        <div className="auth-visual-overlay"><h2>READ IT ALL YOU CAN.</h2></div>
       </div>
     </div>
   )
