@@ -6,7 +6,7 @@ import ProductCard from '../components/ProductCard'
 import type { Category, SortOption } from '../types'
 import './Products.css'
 
-const CATEGORIES: Category[] = ["'all', 'fiction', 'non-fiction', 'science', 'history']
+const CATEGORIES: Category[] = ['all', 'fiction', 'non-fiction', 'science', 'history']
 const SORT_OPTIONS: { label: string; value: SortOption }[] = [
   { label: 'Featured',          value: 'featured'   },
   { label: 'Price: Low → High', value: 'price_asc'  },
