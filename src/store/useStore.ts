@@ -130,7 +130,7 @@ export const useStore = create<StoreState>()(
       removeToast: (id) => set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) })),
     }),
     {
-      name: 'nike-store',
+      name: 'libravault-store',
       partialize: (s) => ({ cart: s.cart, wishlistIds: s.wishlistIds }),
     }
   )

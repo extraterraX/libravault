@@ -52,7 +52,7 @@ export default function Login() {
           </svg>
         </Link>
         <h1 className="auth-title">Welcome back</h1>
-        <p className="auth-sub">Sign in to your Nike account</p>
+        <p className="auth-sub">Sign in to your LibraVault account</p>
 
         {error && <div className="auth-alert error">{error}</div>}
 
@@ -91,7 +91,7 @@ export default function Login() {
       </div>
 
       <div className="auth-visual">
-        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80" alt="Nike shoe" />
+        <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&q=80" alt="Books" />
         <div className="auth-visual-overlay"><h2>JUST DO IT.</h2></div>
       </div>
     </div>

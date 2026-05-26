@@ -30,7 +30,7 @@ export default function ForgotPassword() {
   return (
     <div className="auth-page">
       <div className="auth-card" style={{ justifyContent: 'center' }}>
-        <Link to="/" className="auth-logo" aria-label="Nike Home">
+        <Link to="/" className="auth-logo" aria-label="LibraVault Home">
           <svg viewBox="0 0 60 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: 56, height: 22 }}>
             <path d="M6 18L42.5 4C44.5 3.2 46 3.5 46 5.5C46 7.5 43 10.5 40 12L6 18Z" fill="currentColor" />
           </svg>

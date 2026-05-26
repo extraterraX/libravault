@@ -43,7 +43,7 @@ function StoreLayout({ children }: { children: React.ReactNode }) {
 }
 
 // Cache role in localStorage so we don't re-fetch on every page load
-const ROLE_CACHE_KEY = 'nike-role-cache'
+const ROLE_CACHE_KEY = 'libravault-role-cache'
 
 function getCachedRole(userId: string): Role | null {
   try {

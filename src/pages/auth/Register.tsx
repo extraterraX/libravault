@@ -95,7 +95,7 @@ export default function Register() {
             <path d="M6 18L42.5 4C44.5 3.2 46 3.5 46 5.5C46 7.5 43 10.5 40 12L6 18Z" fill="currentColor" />
           </svg>
         </Link>
-        <h1 className="auth-title">Join Nike</h1>
+        <h1 className="auth-title">Join LibraVault</h1>
         <p className="auth-sub">Create your account today</p>
 
         {serverError && <div className="auth-alert error">{serverError}</div>}
@@ -142,7 +142,7 @@ export default function Register() {
           </div>
 
           <p style={{ fontSize: 12, color: 'var(--gray-500)', lineHeight: 1.6 }}>
-            By creating an account you agree to Nike's{' '}
+            By creating an account you agree to LibraVault's{' '}
             <a href="#" style={{ textDecoration: 'underline' }}>Privacy Policy</a> and{' '}
             <a href="#" style={{ textDecoration: 'underline' }}>Terms of Use</a>.
           </p>
@@ -155,7 +155,7 @@ export default function Register() {
       </div>
 
       <div className="auth-visual">
-        <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=800&q=80" alt="Nike shoe" />
+        <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=80" alt="Books" />
         <div className="auth-visual-overlay"><h2>BE A MEMBER.</h2></div>
       </div>
     </div>

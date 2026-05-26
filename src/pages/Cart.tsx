@@ -15,7 +15,7 @@ export default function Cart() {
       <div style={{ paddingTop: 'var(--nav-h)', minHeight: '70vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
         <ShoppingBag size={64} strokeWidth={1} color="var(--gray-300)" />
         <h2 style={{ fontSize: 28, fontFamily: 'var(--font-display)' }}>Your bag is empty</h2>
-        <p style={{ color: 'var(--gray-500)' }}>Add some shoes to get started.</p>
+        <p style={{ color: 'var(--gray-500)' }}>Add some books to get started.</p>
         <Link to="/products" className="btn btn-primary">Shop Now</Link>
       </div>
     )

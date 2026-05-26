@@ -325,7 +325,7 @@ export default function AdminProducts() {
                 <button onClick={close}><X size={20} /></button>
               </div>
               <div className="admin-modal-grid">
-                <div className="form-group full"><label className="form-label">Product Name *</label><input className="form-input" value={form.name} onChange={setField('name')} placeholder="Air Max 270" /></div>
+                <div className="form-group full"><label className="form-label">Product Name *</label><input className="form-input" value={form.name} onChange={setField('name')} placeholder="e.g. The Great Gatsby" /></div>
                 <div className="form-group"><label className="form-label">Category</label><select className="form-input" value={form.category} onChange={setField('category')}><option value="men">Men</option><option value="women">Women</option><option value="lifestyle">Lifestyle</option><option value="basketball">Basketball</option></select></div>
                 <div className="form-group"><label className="form-label">Total Stock <span style={{ color: 'var(--gray-400)', fontWeight: 400 }}>(calculated)</span></label><input className="form-input" value={totalStock} disabled style={{ background: 'var(--gray-50)' }} /></div>
                 <div className="form-group"><label className="form-label">Price (₱) *</label><input className="form-input" type="number" min={0} value={form.price} onChange={setField('price')} placeholder="7500" /></div>
