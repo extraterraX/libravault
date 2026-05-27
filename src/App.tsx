@@ -1,152 +1,145 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { CheckCircle, Eye, EyeOff } from 'lucide-react'
-import { supabase } from '../../lib/supabase'
-import './Auth.css'
+import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { supabase } from './lib/supabase'
+import { useStore } from './store/useStore'
+import type { Role } from './lib/rbac'
+import { RequireAuth, RequireAdmin, AccessDenied } from './components/Guards'
 
-export default function ResetPassword() {
-  const navigate = useNavigate()
-  const [password, setPassword] = useState('')
-  const [confirm, setConfirm] = useState('')
-  const [showPw, setShowPw] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [done, setDone] = useState(false)
-  const [error, setError] = useState('')
-  const [validSession, setValidSession] = useState(false)
-  const [checking, setChecking] = useState(true)
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
+import Toast from './components/Toast'
+import CartModal from './components/CartModal'
+
+import Home from './pages/Home'
+import Products from './pages/Products'
+import ProductDetail from './pages/ProductDetail'
+import Cart from './pages/Cart'
+import Checkout from './pages/Checkout'
+import Wishlist from './pages/Wishlist'
+import Orders from './pages/Orders'
+
+import Login from './pages/auth/Login'
+import Register from './pages/auth/Register'
+import ForgotPassword from './pages/auth/ForgotPassword'
+import ResetPassword from './pages/auth/ResetPassword'
+
+import Dashboard from './pages/admin/Dashboard'
+import AdminProducts from './pages/admin/AdminProducts'
+import AdminOrders from './pages/admin/AdminOrders'
+import AdminUsers from './pages/admin/AdminUsers'
+import AdminAnalytics from './pages/admin/AdminAnalytics'
+import AdminRoles from './pages/admin/AdminRoles'
+
+import './index.css'
+
+function StoreLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Navbar />
+      <div style={{ minHeight: '100vh' }}>{children}</div>
+      <Footer />
+      <CartModal />
+    </>
+  )
+}
+
+// Cache role in localStorage so we don't re-fetch on every page load
+const ROLE_CACHE_KEY = 'libravault-role-cache'
+
+function getCachedRole(userId: string): Role | null {
+  try {
+    const cached = localStorage.getItem(ROLE_CACHE_KEY)
+    if (!cached) return null
+    const { id, role, ts } = JSON.parse(cached)
+    // Cache valid for 1 hour
+    if (id === userId && Date.now() - ts < 3600_000) return role as Role
+    return null
+  } catch { return null }
+}
+
+function setCachedRole(userId: string, role: Role) {
+  try {
+    localStorage.setItem(ROLE_CACHE_KEY, JSON.stringify({ id: userId, role, ts: Date.now() }))
+  } catch { /* ignore */ }
+}
+
+export default function App() {
+  const { setUser, setAuthLoading } = useStore()
 
   useEffect(() => {
-    // Supabase puts the token in the URL hash as #access_token=...&type=recovery
-    // Calling getSession() after the hash is processed sets the session automatically
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setValidSession(true)
-      } else {
-        setError('This reset link is invalid or has expired. Please request a new one.')
+    const resolveUserAndRole = async (session: any) => {
+      if (!session?.user) {
+        setUser(null, 'customer')
+        return
       }
-      setChecking(false)
-    })
 
-    // Also listen for the PASSWORD_RECOVERY event Supabase fires
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') setValidSession(true)
-    })
-    return () => subscription.unsubscribe()
-  }, [])
+      // 1) Check cache first — instant, no DB call
+      const cachedRole = getCachedRole(session.user.id)
+      if (cachedRole) {
+        setUser(session.user, cachedRole)
+        // Refresh in background to catch role changes
+        supabase.from('profiles').select('role').eq('id', session.user.id).single()
+          .then(({ data }) => {
+            const role = (data?.role as Role) ?? 'customer'
+            if (role !== cachedRole) {
+              setCachedRole(session.user.id, role)
+              setUser(session.user, role)
+            }
+          })
+        return
+      }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    if (password.length < 6) { setError('Password must be at least 6 characters.'); return }
-    if (password !== confirm) { setError('Passwords do not match.'); return }
-    setLoading(true)
-    try {
-      const { error: err } = await supabase.auth.updateUser({ password })
-      if (err) throw err
-      setDone(true)
-      setTimeout(() => navigate('/login'), 3000)
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Something went wrong.')
-    } finally {
-      setLoading(false)
+      // 2) No cache — fetch from DB
+      const { data } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single()
+      const role = (data?.role as Role) ?? 'customer'
+      setCachedRole(session.user.id, role)
+      setUser(session.user, role)
     }
-  }
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      resolveUserAndRole(session)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (_event === 'SIGNED_OUT') localStorage.removeItem(ROLE_CACHE_KEY)
+        resolveUserAndRole(session)
+      }
+    )
+
+    return () => subscription.unsubscribe()
+  }, [setUser, setAuthLoading])
 
   return (
-    <div className="auth-page">
-      <div className="auth-card" style={{ justifyContent: 'center' }}>
-        <Link to="/" className="auth-logo" aria-label="LibraVault Home">
-          <svg viewBox="0 0 64 64" fill="none" style={{ width: 56, height: 56 }}>
-            <rect x="10" y="10" width="44" height="44" rx="12" fill="currentColor" opacity="0.1"/>
-            <path d="M20 18h14c4 0 8 2 8 6v22c0-4-4-6-8-6H20V18z" fill="currentColor" />
-            <path d="M24 22h10v18H24c-2 0-4 1-4 2V24c0-1 2-2 4-2z" fill="white" opacity="0.5" />
-          </svg>
-        </Link>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login"           element={<Login />} />
+        <Route path="/register"        element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password"  element={<ResetPassword />} />
+        <Route path="/access-denied"   element={<StoreLayout><AccessDenied fullPage /></StoreLayout>} />
 
-        {checking ? (
-          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--gray-400)' }}>
-            Verifying your reset link…
-          </div>
-        ) : done ? (
-          <div style={{ textAlign: 'center', padding: '20px 0' }}>
-            <CheckCircle size={56} color="green" style={{ margin: '0 auto 16px' }} />
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, marginBottom: 8 }}>
-              Password Updated!
-            </h2>
-            <p style={{ color: 'var(--gray-500)', marginBottom: 24 }}>
-              Redirecting you to sign in…
-            </p>
-            <Link to="/login" className="btn btn-secondary btn-sm">Go to Sign In</Link>
-          </div>
-        ) : !validSession ? (
-          <div style={{ textAlign: 'center', padding: '20px 0' }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, marginBottom: 12 }}>
-              Link Expired
-            </h2>
-            <p style={{ color: 'var(--gray-500)', marginBottom: 24 }}>{error}</p>
-            <Link to="/forgot-password" className="btn btn-primary btn-sm">
-              Request New Link
-            </Link>
-          </div>
-        ) : (
-          <>
-            <h1 className="auth-title">Set New Password</h1>
-            <p className="auth-sub">Choose a strong password for your account.</p>
+        <Route path="/admin"           element={<RequireAdmin><Dashboard /></RequireAdmin>} />
+        <Route path="/admin/products"  element={<RequireAdmin><AdminProducts /></RequireAdmin>} />
+        <Route path="/admin/orders"    element={<RequireAdmin><AdminOrders /></RequireAdmin>} />
+        <Route path="/admin/users"     element={<RequireAdmin><AdminUsers /></RequireAdmin>} />
+        <Route path="/admin/analytics" element={<RequireAdmin><AdminAnalytics /></RequireAdmin>} />
+        <Route path="/admin/roles"     element={<RequireAdmin><AdminRoles /></RequireAdmin>} />
 
-            {error && <div className="auth-alert error">{error}</div>}
+        <Route path="/"             element={<StoreLayout><Home /></StoreLayout>} />
+        <Route path="/products"     element={<StoreLayout><Products /></StoreLayout>} />
+        <Route path="/products/:id" element={<StoreLayout><ProductDetail /></StoreLayout>} />
 
-            <form onSubmit={handleSubmit} className="auth-form">
-              <div className="form-group">
-                <label className="form-label" htmlFor="password">New Password</label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    id="password"
-                    type={showPw ? 'text' : 'password'}
-                    className="form-input"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="At least 6 characters"
-                    required
-                    autoComplete="new-password"
-                    style={{ paddingRight: 44 }}
-                  />
-                  <button type="button" onClick={() => setShowPw((v) => !v)}
-                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gray-400)', padding: 0 }}>
-                    {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label" htmlFor="confirm">Confirm Password</label>
-                <input
-                  id="confirm"
-                  type={showPw ? 'text' : 'password'}
-                  className="form-input"
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                  placeholder="Repeat your password"
-                  required
-                  autoComplete="new-password"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="btn btn-primary btn-full"
-                disabled={loading}
-                style={{ marginTop: 4, padding: '18px', fontSize: 16 }}
-              >
-                {loading ? <><span className="spinner" /> Updating…</> : 'Update Password'}
-              </button>
-            </form>
-
-            <p className="auth-switch">
-              <Link to="/login">← Back to Sign In</Link>
-            </p>
-          </>
-        )}
-      </div>
-    </div>
+        <Route path="/cart"     element={<StoreLayout><RequireAuth><Cart /></RequireAuth></StoreLayout>} />
+        <Route path="/checkout" element={<StoreLayout><RequireAuth><Checkout /></RequireAuth></StoreLayout>} />
+        <Route path="/wishlist" element={<StoreLayout><RequireAuth><Wishlist /></RequireAuth></StoreLayout>} />
+        <Route path="/orders"   element={<StoreLayout><RequireAuth><Orders /></RequireAuth></StoreLayout>} />
+      </Routes>
+      <Toast />
+    </BrowserRouter>
   )
 }
