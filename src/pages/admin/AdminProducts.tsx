@@ -22,38 +22,20 @@ type FormData = {
 
 const EMPTY: FormData = {
   name: '', category: 'fiction', price: '', sale_price_str: '',
-  image: '', description: '', sizeStocks: [], colors: ['#111'],
+  image: '', description: '', sizeStocks: [], colors: [],
 }
 
 const ALL_SIZES = [1, 2, 3, 4]
 
 const SIZE_PRESETS: { label: string; sizes: number[] }[] = [
-  { label: 'Print only',    sizes: [1, 2] },
-  { label: 'Digital only',  sizes: [3, 4] },
-  { label: 'Print + eBook', sizes: [1, 2, 3] },
-  { label: 'All editions',  sizes: ALL_SIZES },
-  { label: 'Clear',         sizes: [] },
+  { label: 'Print only',       sizes: [1, 2] },
+  { label: 'Digital only',     sizes: [3, 4] },
+  { label: 'Print + eBook',    sizes: [1, 2, 3] },
+  { label: 'All editions',     sizes: ALL_SIZES },
+  { label: 'Clear',            sizes: [] },
 ]
 
-// Common book cover accent colors
-const COLOR_PRESETS: { name: string; hex: string }[] = [
-  { name: 'Black',     hex: '#111111' },
-  { name: 'White',     hex: '#ffffff' },
-  { name: 'Grey',      hex: '#737373' },
-  { name: 'Red',       hex: '#dc2626' },
-  { name: 'Blue',      hex: '#2563eb' },
-  { name: 'Navy',      hex: '#1e3a8a' },
-  { name: 'Green',     hex: '#16a34a' },
-  { name: 'Yellow',    hex: '#fbbf24' },
-  { name: 'Volt',      hex: '#e5ff00' },
-  { name: 'Orange',    hex: '#ea580c' },
-  { name: 'Pink',      hex: '#ec4899' },
-  { name: 'Purple',    hex: '#7c3aed' },
-  { name: 'Brown',     hex: '#92400e' },
-  { name: 'Beige',     hex: '#f5e6d3' },
-  { name: 'Sky Blue',  hex: '#0ea5e9' },
-  { name: 'Cream',     hex: '#fef3c7' },
-]
+
 
 export default function AdminProducts() {
   const { data: products, loading, refetch } = useAdminProducts()
@@ -92,7 +74,7 @@ export default function AdminProducts() {
         image: p.image,
         description: p.description,
         sizeStocks: realSizes.length > 0 ? realSizes : (p.sizes ?? []).map((s) => ({ size: s, stock: 0 })),
-        colors: p.colors && p.colors.length > 0 ? p.colors : ['#111'],
+        colors: p.colors && p.colors.length > 0 ? p.colors : [],
       })
     } catch {
       setForm({
@@ -103,7 +85,7 @@ export default function AdminProducts() {
         image: p.image,
         description: p.description,
         sizeStocks: (p.sizes ?? []).map((s) => ({ size: s, stock: 0 })),
-        colors: p.colors && p.colors.length > 0 ? p.colors : ['#111'],
+        colors: [],
       })
     }
     setEditId(p.id)
@@ -115,22 +97,6 @@ export default function AdminProducts() {
   const setField = <K extends keyof FormData>(k: K) => (e: React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }))
 
-  // ── Color management ──
-  const toggleColor = (hex: string) => {
-    setForm((f) => ({
-      ...f,
-      colors: f.colors.includes(hex) ? f.colors.filter((c) => c !== hex) : [...f.colors, hex],
-    }))
-  }
-  const removeColor = (hex: string) => {
-    setForm((f) => ({ ...f, colors: f.colors.filter((c) => c !== hex) }))
-  }
-  const [customColor, setCustomColor] = useState('#000000')
-  const addCustomColor = () => {
-    if (!form.colors.includes(customColor)) {
-      setForm((f) => ({ ...f, colors: [...f.colors, customColor] }))
-    }
-  }
 
   // Add/remove a size with default stock
   const toggleSize = (size: number) => {
@@ -183,11 +149,7 @@ export default function AdminProducts() {
   const handleSave = async () => {
     if (!form.name || !form.price) return
     if (form.sizeStocks.length === 0) {
-      alert('Please select at least one size for this product.')
-      return
-    }
-    if (form.colors.length === 0) {
-      alert('Please add at least one color for this product.')
+      alert('Please select at least one edition for this product.')
       return
     }
     setSaving(true)
@@ -200,7 +162,7 @@ export default function AdminProducts() {
         image: form.image || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80',
         description: form.description,
         stock: totalStock,
-        colors: form.colors,
+        colors: [],
         sizes: form.sizeStocks.map((x) => x.size),
         badge: form.sale_price_str ? 'sale' : null,
         is_active: true,
@@ -254,10 +216,16 @@ export default function AdminProducts() {
         </div>
         <select className="sort-select" value={catFilter} onChange={(e) => setCatFilter(e.target.value)} style={{ borderRadius: 8 }}>
           <option value="all">All Categories</option>
-          <option value="men">Men</option>
-          <option value="women">Women</option>
-          <option value="lifestyle">Lifestyle</option>
-          <option value="basketball">Basketball</option>
+          <option value="fiction">Fiction</option>
+          <option value="non-fiction">Non-Fiction</option>
+          <option value="mystery">Mystery</option>
+          <option value="sci-fi">Sci-Fi</option>
+          <option value="fantasy">Fantasy</option>
+          <option value="romance">Romance</option>
+          <option value="biography">Biography</option>
+          <option value="history">History</option>
+          <option value="self-help">Self-Help</option>
+          <option value="children">Children</option>
         </select>
         <span style={{ fontSize: 13, color: 'var(--gray-500)', alignSelf: 'center' }}>
           {filtered.length} of {products?.length ?? '…'}
@@ -326,7 +294,7 @@ export default function AdminProducts() {
               </div>
               <div className="admin-modal-grid">
                 <div className="form-group full"><label className="form-label">Product Name *</label><input className="form-input" value={form.name} onChange={setField('name')} placeholder="e.g. The Great Gatsby" /></div>
-                <div className="form-group"><label className="form-label">Category</label><select className="form-input" value={form.category} onChange={setField('category')}><option value="men">Men</option><option value="women">Women</option><option value="lifestyle">Lifestyle</option><option value="basketball">Basketball</option></select></div>
+                <div className="form-group"><label className="form-label">Category</label><select className="form-input" value={form.category} onChange={setField('category')}><option value="fiction">Fiction</option><option value="non-fiction">Non-Fiction</option><option value="mystery">Mystery</option><option value="sci-fi">Sci-Fi</option><option value="fantasy">Fantasy</option><option value="romance">Romance</option><option value="biography">Biography</option><option value="history">History</option><option value="self-help">Self-Help</option><option value="children">Children</option></select></div>
                 <div className="form-group"><label className="form-label">Total Stock <span style={{ color: 'var(--gray-400)', fontWeight: 400 }}>(calculated)</span></label><input className="form-input" value={totalStock} disabled style={{ background: 'var(--gray-50)' }} /></div>
                 <div className="form-group"><label className="form-label">Price (₱) *</label><input className="form-input" type="number" min={0} value={form.price} onChange={setField('price')} placeholder="7500" /></div>
                 <div className="form-group"><label className="form-label">Sale Price (₱) <span style={{ fontWeight: 400, color: 'var(--gray-400)' }}>optional</span></label><input className="form-input" type="number" min={0} value={form.sale_price_str} onChange={setField('sale_price_str')} placeholder="blank = no sale" /></div>
@@ -340,9 +308,9 @@ export default function AdminProducts() {
                 <div className="form-group full">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
                     <label className="form-label" style={{ margin: 0 }}>
-                      Editions & Stock per Size *
+                      Editions & Stock per Edition *
                       <span style={{ marginLeft: 6, color: 'var(--gray-400)', fontWeight: 400 }}>
-                        ({form.sizeStocks.length} sizes · {totalStock} total units)
+                        ({form.sizeStocks.length} editions · {totalStock} total units)
                       </span>
                     </label>
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -355,10 +323,11 @@ export default function AdminProducts() {
                     </div>
                   </div>
 
-                  {/* Size grid — click to add/remove */}
-                  <p style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 6 }}>Click sizes to enable them:</p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 6, marginBottom: 12 }}>
+                  {/* Edition grid — click to add/remove */}
+                  <p style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 6 }}>Click editions to enable them:</p>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6, marginBottom: 12 }}>
                     {ALL_SIZES.map((s) => {
+                      const editionNames = ['Hardcover', 'Paperback', 'eBook', 'Audiobook']
                       const enabled = form.sizeStocks.some((x) => x.size === s)
                       return (
                         <button key={s} type="button" onClick={() => toggleSize(s)}
@@ -369,7 +338,7 @@ export default function AdminProducts() {
                             color: enabled ? 'var(--white)' : 'var(--black)',
                             borderRadius: 6, cursor: 'pointer', transition: 'all 0.12s',
                           }}>
-                          {s}
+                          {editionNames[s - 1] ?? s}
                         </button>
                       )
                     })}
@@ -389,13 +358,13 @@ export default function AdminProducts() {
                         />
                         <button type="button" onClick={applyBulkStock}
                           style={{ padding: '4px 12px', background: 'var(--white)', border: '1px solid var(--gray-200)', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
-                          Apply to all sizes
+                          Apply to all editions
                         </button>
                       </div>
 
                       <div style={{ border: '1px solid var(--gray-200)', borderRadius: 10, overflow: 'hidden' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 90px', padding: '8px 14px', background: 'var(--gray-50)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--gray-500)', borderBottom: '1px solid var(--gray-200)' }}>
-                          <span>Size (US)</span>
+                          <span>Edition</span>
                           <span>Stock</span>
                           <span style={{ textAlign: 'right' }}>Status</span>
                         </div>
@@ -404,7 +373,7 @@ export default function AdminProducts() {
                           const color = item.stock === 0 ? 'var(--red)' : item.stock < 5 ? '#f59e0b' : '#22c55e'
                           return (
                             <div key={item.size} style={{ display: 'grid', gridTemplateColumns: '80px 1fr 90px', padding: '8px 14px', borderBottom: '1px solid var(--gray-100)', alignItems: 'center' }}>
-                              <strong style={{ fontSize: 13 }}>US {item.size}</strong>
+                              <strong style={{ fontSize: 13 }}>{['Hardcover','Paperback','eBook','Audiobook'][item.size - 1] ?? `Ed. ${item.size}`}</strong>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                 <button type="button" onClick={() => updateStock(item.size, -1)}
                                   style={{ width: 26, height: 26, border: '1px solid var(--gray-200)', borderRadius: 6, background: 'var(--white)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -438,112 +407,7 @@ export default function AdminProducts() {
 
                   {form.sizeStocks.length === 0 && (
                     <p style={{ fontSize: 12, color: 'var(--red)', marginTop: 6 }}>
-                      Select at least one size for this product.
-                    </p>
-                  )}
-                </div>
-
-                {/* ── Color picker ── */}
-                <div className="form-group full">
-                  <label className="form-label">
-                    Product Colors
-                    <span style={{ marginLeft: 6, color: 'var(--gray-400)', fontWeight: 400 }}>
-                      ({form.colors.length} selected)
-                    </span>
-                  </label>
-
-                  {/* Currently selected colors */}
-                  {form.colors.length > 0 && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: 12, background: 'var(--gray-50)', borderRadius: 10, marginBottom: 10 }}>
-                      {form.colors.map((hex) => (
-                        <div key={hex} style={{ position: 'relative' }}>
-                          <div
-                            style={{
-                              width: 40, height: 40, borderRadius: '50%',
-                              background: hex, border: '2px solid var(--gray-200)',
-                              boxShadow: 'inset 0 0 0 2px var(--white)',
-                            }}
-                            title={hex}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeColor(hex)}
-                            style={{
-                              position: 'absolute', top: -4, right: -4,
-                              width: 18, height: 18, borderRadius: '50%',
-                              background: 'var(--white)', border: '1.5px solid var(--gray-300)',
-                              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              padding: 0,
-                            }}
-                          >
-                            <X size={10} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Common color presets */}
-                  <p style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 6 }}>Quick picks:</p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
-                    {COLOR_PRESETS.map((c) => {
-                      const selected = form.colors.includes(c.hex)
-                      return (
-                        <button
-                          key={c.hex}
-                          type="button"
-                          onClick={() => toggleColor(c.hex)}
-                          title={c.name}
-                          style={{
-                            display: 'flex', alignItems: 'center', gap: 6,
-                            padding: '5px 10px 5px 5px',
-                            background: selected ? 'var(--black)' : 'var(--white)',
-                            color: selected ? 'var(--white)' : 'var(--gray-700)',
-                            border: `1.5px solid ${selected ? 'var(--black)' : 'var(--gray-200)'}`,
-                            borderRadius: 50, fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                            transition: 'all 0.12s',
-                          }}
-                        >
-                          <span style={{
-                            width: 18, height: 18, borderRadius: '50%',
-                            background: c.hex, border: c.hex === '#ffffff' ? '1px solid var(--gray-300)' : 'none',
-                            flexShrink: 0,
-                          }} />
-                          {c.name}
-                          {selected && <span style={{ marginLeft: 2 }}>✓</span>}
-                        </button>
-                      )
-                    })}
-                  </div>
-
-                  {/* Custom hex color picker */}
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '8px 12px', background: 'var(--gray-50)', borderRadius: 8 }}>
-                    <span style={{ fontSize: 12, color: 'var(--gray-600)', fontWeight: 600 }}>Custom:</span>
-                    <input
-                      type="color"
-                      value={customColor}
-                      onChange={(e) => setCustomColor(e.target.value)}
-                      style={{ width: 36, height: 28, padding: 0, border: '1px solid var(--gray-200)', borderRadius: 6, cursor: 'pointer', background: 'none' }}
-                    />
-                    <input
-                      type="text"
-                      value={customColor}
-                      onChange={(e) => setCustomColor(e.target.value)}
-                      style={{ width: 90, padding: '4px 8px', border: '1px solid var(--gray-200)', borderRadius: 6, fontSize: 12, fontFamily: 'monospace' }}
-                      placeholder="#000000"
-                    />
-                    <button
-                      type="button"
-                      onClick={addCustomColor}
-                      disabled={form.colors.includes(customColor)}
-                      style={{ padding: '4px 14px', background: form.colors.includes(customColor) ? 'var(--gray-200)' : 'var(--black)', color: form.colors.includes(customColor) ? 'var(--gray-500)' : 'var(--white)', border: 'none', borderRadius: 6, fontSize: 12, cursor: form.colors.includes(customColor) ? 'not-allowed' : 'pointer', fontWeight: 600 }}
-                    >
-                      {form.colors.includes(customColor) ? 'Already added' : '+ Add color'}
-                    </button>
-                  </div>
-                  {form.colors.length === 0 && (
-                    <p style={{ fontSize: 12, color: 'var(--red)', marginTop: 6 }}>
-                      Add at least one color for this product.
+                      Select at least one edition for this product.
                     </p>
                   )}
                 </div>
@@ -552,7 +416,7 @@ export default function AdminProducts() {
               </div>
               <div style={{ display: 'flex', gap: 10, marginTop: 24, justifyContent: 'flex-end' }}>
                 <button onClick={close} className="btn btn-secondary btn-sm">Cancel</button>
-                <button onClick={handleSave} className="btn btn-primary btn-sm" disabled={!form.name || !form.price || form.sizeStocks.length === 0 || form.colors.length === 0 || saving}>
+                <button onClick={handleSave} className="btn btn-primary btn-sm" disabled={!form.name || !form.price || form.sizeStocks.length === 0 || saving}>
                   {saving ? <><span className="spinner" /> Saving…</> : modal === 'add' ? 'Add Product' : 'Save Changes'}
                 </button>
               </div>
