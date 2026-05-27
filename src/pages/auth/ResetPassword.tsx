@@ -16,10 +16,8 @@ export default function ResetPassword() {
   const [checking, setChecking] = useState(true)
 
   useEffect(() => {
-    // Supabase puts the token in the URL hash as #access_token=...&type=recovery
-    // Calling getSession() after the hash is processed sets the session automatically
-    supabase.auth.getSession().then(({ data: { session } }: { data: { session: any } }) => {
-      if (session) {
+    supabase.auth.getSession().then((res) => {
+      if (res.data.session) {
         setValidSession(true)
       } else {
         setError('This reset link is invalid or has expired. Please request a new one.')
@@ -27,9 +25,11 @@ export default function ResetPassword() {
       setChecking(false)
     })
 
-    // Also listen for the PASSWORD_RECOVERY event Supabase fires
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string) => {
-      if (event === 'PASSWORD_RECOVERY') setValidSession(true)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setValidSession(true)
+        setChecking(false)
+      }
     })
     return () => subscription.unsubscribe()
   }, [])
