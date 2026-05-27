@@ -18,7 +18,7 @@ export default function ResetPassword() {
   useEffect(() => {
     // Supabase puts the token in the URL hash as #access_token=...&type=recovery
     // Calling getSession() after the hash is processed sets the session automatically
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: any } }) => {
       if (session) {
         setValidSession(true)
       } else {
@@ -28,7 +28,7 @@ export default function ResetPassword() {
     })
 
     // Also listen for the PASSWORD_RECOVERY event Supabase fires
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string) => {
       if (event === 'PASSWORD_RECOVERY') setValidSession(true)
     })
     return () => subscription.unsubscribe()
