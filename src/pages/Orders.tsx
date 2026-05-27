@@ -71,7 +71,7 @@ export default function Orders() {
                   <div style={{ flex: 1 }}>
                     {(order.orderItems ?? []).slice(0, 2).map((item: any, i: number) => (
                       <p key={i} style={{ fontSize: 13, color: 'var(--gray-600)', marginBottom: 2 }}>
-                        {item.products?.name} · US {item.size} × {item.qty}
+                        {item.products?.name} · {({1:'Hardcover',2:'Paperback',3:'eBook',4:'Audiobook'} as Record<number,string>)[item.edition] ?? `Edition ${item.edition}`} × {item.qty}
                       </p>
                     ))}
                     {(order.orderItems ?? []).length > 2 && (

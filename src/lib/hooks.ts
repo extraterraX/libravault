@@ -127,7 +127,7 @@ export function useOrders(userId: string | undefined) {
         order_items (
           qty,
           unit_price,
-          size,
+          edition,
           products ( name, image )
         )
       `)
