@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { Search, X, Shield, User, ChevronDown, Loader } from 'lucide-react'
 import AdminLayout from './AdminLayout'
 import { Can } from '../../components/Guards'
@@ -10,12 +10,63 @@ import type { Role } from '../../lib/rbac'
 
 const ALL_ROLES: Role[] = ['super_admin','manager','editor','viewer','customer']
 
+function RoleDropdown({ u, currentRole, onchange, saving }: {
+  u: any, currentRole: Role, onchange: (id: string, role: Role) => void, saving: string | null
+}) {
+  const [open, setOpen] = useState(false)
+  const [pos, setPos] = useState({ top: 0, left: 0 })
+  const btnRef = useRef<HTMLButtonElement>(null)
+  const userRole = (u.role ?? 'customer') as Role
+
+  const handleOpen = () => {
+    if (btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect()
+      setPos({ top: rect.bottom + window.scrollY + 4, left: rect.left + window.scrollX })
+    }
+    setOpen((v) => !v)
+  }
+
+  useEffect(() => {
+    if (!open) return
+    const close = (e: MouseEvent) => {
+      if (btnRef.current && !btnRef.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', close)
+    return () => document.removeEventListener('mousedown', close)
+  }, [open])
+
+  return (
+    <div style={{ position: 'relative', display: 'inline-block' }}>
+      <button
+        ref={btnRef}
+        onClick={handleOpen}
+        disabled={saving === u.id}
+        style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', border: '1.5px solid var(--gray-200)', borderRadius: 6, fontSize: 13, cursor: 'pointer', background: 'var(--white)' }}>
+        {saving === u.id ? <><span className="spinner" style={{ width: 12, height: 12 }} /> Saving…</> : <>Change <ChevronDown size={13} /></>}
+      </button>
+      {open && (
+        <div style={{ position: 'fixed', top: pos.top, left: pos.left, background: 'var(--white)', border: '1px solid var(--gray-200)', borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.12)', zIndex: 9999, minWidth: 160, overflow: 'hidden' }}>
+          {ALL_ROLES.filter((r) => canModifyRole(currentRole, r) || r === userRole).map((r) => {
+            const m = ROLE_META[r]
+            return (
+              <button key={r} onClick={() => { onchange(u.id, r); setOpen(false) }}
+                style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '10px 14px', fontSize: 13, textAlign: 'left', background: r === userRole ? m.bg : 'var(--white)', color: r === userRole ? m.color : 'var(--black)', fontWeight: r === userRole ? 700 : 400, border: 'none', cursor: 'pointer' }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: m.color, flexShrink: 0 }} />
+                {m.label} {r === userRole && '✓'}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function AdminUsers() {
   const { role: currentRole } = useStore()
   const { data: users, loading, refetch } = useAdminUsers()
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState<Role|'All'>('All')
-  const [openRoleMenu, setOpenRoleMenu] = useState<string|null>(null)
   const [saving, setSaving] = useState<string|null>(null)
 
   const filtered = useMemo(() => {
@@ -30,7 +81,7 @@ export default function AdminUsers() {
 
   const handleRoleChange = async (userId: string, newRole: Role) => {
     setSaving(userId)
-    try { await updateUserRole(userId, newRole); await refetch(); setOpenRoleMenu(null) }
+    try { await updateUserRole(userId, newRole); await refetch() }
     catch (err: any) { alert(err.message) }
     finally { setSaving(null) }
   }
@@ -101,28 +152,7 @@ export default function AdminUsers() {
                     <Can do="users:update_role">
                       <td>
                         {canChange ? (
-                          <div style={{ position: 'relative' }}>
-                            <button
-                              onClick={() => setOpenRoleMenu(openRoleMenu === u.id ? null : u.id)}
-                              disabled={saving === u.id}
-                              style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', border: '1.5px solid var(--gray-200)', borderRadius: 6, fontSize: 13, cursor: 'pointer', background: 'var(--white)' }}>
-                              {saving === u.id ? <><span className="spinner" style={{ width: 12, height: 12 }} /> Saving…</> : <>Change <ChevronDown size={13} /></>}
-                            </button>
-                            {openRoleMenu === u.id && (
-                              <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: 4, background: 'var(--white)', border: '1px solid var(--gray-200)', borderRadius: 8, boxShadow: 'var(--shadow-lg)', zIndex: 50, minWidth: 160, overflow: 'hidden' }}>
-                                {ALL_ROLES.filter((r) => canModifyRole(currentRole, r) || r === userRole).map((r) => {
-                                  const m = ROLE_META[r]
-                                  return (
-                                    <button key={r} onClick={() => handleRoleChange(u.id, r)}
-                                      style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '10px 14px', fontSize: 13, textAlign: 'left', background: r === userRole ? m.bg : 'var(--white)', color: r === userRole ? m.color : 'var(--black)', fontWeight: r === userRole ? 700 : 400 }}>
-                                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: m.color, flexShrink: 0 }} />
-                                      {m.label} {r === userRole && '✓'}
-                                    </button>
-                                  )
-                                })}
-                              </div>
-                            )}
-                          </div>
+                          <RoleDropdown u={u} currentRole={currentRole} onchange={handleRoleChange} saving={saving} />
                         ) : (
                           <span style={{ fontSize: 12, color: 'var(--gray-400)' }}>—</span>
                         )}
