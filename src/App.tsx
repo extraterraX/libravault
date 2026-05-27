@@ -17,6 +17,7 @@ import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 import Wishlist from './pages/Wishlist'
 import Orders from './pages/Orders'
+import Profile from './pages/Profile'
 
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
@@ -138,6 +139,7 @@ export default function App() {
         <Route path="/checkout" element={<StoreLayout><RequireAuth><Checkout /></RequireAuth></StoreLayout>} />
         <Route path="/wishlist" element={<StoreLayout><RequireAuth><Wishlist /></RequireAuth></StoreLayout>} />
         <Route path="/orders"   element={<StoreLayout><RequireAuth><Orders /></RequireAuth></StoreLayout>} />
+        <Route path="/profile"  element={<StoreLayout><RequireAuth><Profile /></RequireAuth></StoreLayout>} />
       </Routes>
       <Toast />
     </BrowserRouter>

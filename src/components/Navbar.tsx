@@ -92,6 +92,7 @@ export default function Navbar() {
               {profileOpen && (
                 <div className="dropdown-menu">
                   <span className="dropdown-name">{user.email?.split('@')[0]}</span>
+                  <Link to="/profile" className="dropdown-item">My Profile</Link>
                   <Link to="/orders" className="dropdown-item">My Orders</Link>
                   <Link to="/wishlist" className="dropdown-item">Reading List</Link>
                   {hasPermission(role, 'admin:access') && (
