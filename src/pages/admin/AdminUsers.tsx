@@ -68,6 +68,7 @@ export default function AdminUsers() {
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState<Role|'All'>('All')
   const [saving, setSaving] = useState<string|null>(null)
+  const [roleError, setRoleError] = useState('')
 
   const filtered = useMemo(() => {
     let items = [...(users ?? [])]
@@ -80,9 +81,10 @@ export default function AdminUsers() {
   }, [users, search, roleFilter])
 
   const handleRoleChange = async (userId: string, newRole: Role) => {
+    setRoleError('')
     setSaving(userId)
     try { await updateUserRole(userId, newRole); await refetch() }
-    catch (err: any) { alert(err.message) }
+    catch (err: any) { setRoleError(err.message ?? 'Failed to update role') }
     finally { setSaving(null) }
   }
 
@@ -94,6 +96,13 @@ export default function AdminUsers() {
           <span>Total: <strong style={{ color: 'var(--black)' }}>{users?.length ?? '…'}</strong></span>
         </div>
       </div>
+
+      {roleError && (
+        <div style={{ background: '#fef2f2', color: '#dc2626', padding: '10px 16px', borderRadius: 8, fontSize: 14, marginBottom: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>⚠ {roleError}</span>
+          <button onClick={() => setRoleError('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626', fontWeight: 700 }}>✕</button>
+        </div>
+      )}
 
       <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         <div className="admin-search" style={{ flex: 1, minWidth: 200 }}>
