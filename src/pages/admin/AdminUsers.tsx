@@ -16,6 +16,7 @@ function RoleDropdown({ u, currentRole, onchange, saving }: {
   const [open, setOpen] = useState(false)
   const [pos, setPos] = useState({ top: 0, left: 0 })
   const btnRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
   const userRole = (u.role ?? 'customer') as Role
 
   const handleOpen = () => {
@@ -29,7 +30,13 @@ function RoleDropdown({ u, currentRole, onchange, saving }: {
   useEffect(() => {
     if (!open) return
     const close = (e: MouseEvent) => {
-      if (btnRef.current && !btnRef.current.contains(e.target as Node)) setOpen(false)
+      const target = e.target as Node
+      if (
+        btnRef.current && !btnRef.current.contains(target) &&
+        menuRef.current && !menuRef.current.contains(target)
+      ) {
+        setOpen(false)
+      }
     }
     document.addEventListener('mousedown', close)
     return () => document.removeEventListener('mousedown', close)
@@ -45,7 +52,7 @@ function RoleDropdown({ u, currentRole, onchange, saving }: {
         {saving === u.id ? <><span className="spinner" style={{ width: 12, height: 12 }} /> Saving…</> : <>Change <ChevronDown size={13} /></>}
       </button>
       {open && (
-        <div style={{ position: 'fixed', top: pos.top, left: pos.left, background: 'var(--white)', border: '1px solid var(--gray-200)', borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.12)', zIndex: 9999, minWidth: 160, overflow: 'hidden' }}>
+        <div ref={menuRef} style={{ position: 'fixed', top: pos.top, left: pos.left, background: 'var(--white)', border: '1px solid var(--gray-200)', borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.12)', zIndex: 9999, minWidth: 160, overflow: 'hidden' }}>
           {ALL_ROLES.filter((r) => canModifyRole(currentRole, r) || r === userRole).map((r) => {
             const m = ROLE_META[r]
             return (
