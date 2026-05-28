@@ -164,11 +164,15 @@ export async function updateOrderStatus(rawId: string, status: string) {
 }
 
 export async function updateUserRole(userId: string, role: string) {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('profiles')
     .update({ role, updated_at: new Date().toISOString() })
     .eq('id', userId)
+    .select('id, role')
   if (error) throw error
+  if (!data || data.length === 0) {
+    throw new Error('Role update was blocked by the database. Run the fix_rls_policies.sql in your Supabase SQL Editor first.')
+  }
 }
 
 
