@@ -21,7 +21,7 @@ function RoleDropdown({ u, currentRole, onchange, saving }: {
   const handleOpen = () => {
     if (btnRef.current) {
       const rect = btnRef.current.getBoundingClientRect()
-      setPos({ top: rect.bottom + window.scrollY + 4, left: rect.left + window.scrollX })
+      setPos({ top: rect.bottom + 4, left: rect.left })
     }
     setOpen((v) => !v)
   }
