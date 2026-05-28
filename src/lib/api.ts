@@ -164,10 +164,10 @@ export async function updateOrderStatus(rawId: string, status: string) {
 }
 
 export async function updateUserRole(userId: string, role: string) {
-  const { error } = await supabase.rpc('admin_update_user_role', {
-    p_user_id: userId,
-    p_role: role,
-  })
+  const { error } = await supabase
+    .from('profiles')
+    .update({ role, updated_at: new Date().toISOString() })
+    .eq('id', userId)
   if (error) throw error
 }
 
